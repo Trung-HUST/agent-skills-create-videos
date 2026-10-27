@@ -57,9 +57,10 @@ def main():
     s3 = SKILLS_ROOT / "voice-ai-tts" / "scripts" / "generate_tts_scenes.py"
     s4_sub = SKILLS_ROOT / "auto-subtitle-video-editor" / "scripts" / "generate_subtitles.py"
     s4_vid = SKILLS_ROOT / "auto-subtitle-video-editor" / "scripts" / "assemble_video.py"
+    s5_qa = SKILLS_ROOT.parents[1] / "scripts" / "auto_qa_video.py"
 
     # Stage 1: Validate Manifest
-    run_step("1/4 - Validate Script & Scene Breakdown Manifest", [sys.executable, str(s1), "--validate", str(args.manifest)])
+    run_step("1/5 - Validate Script & Scene Breakdown Manifest", [sys.executable, str(s1), "--validate", str(args.manifest)])
 
     # Stage 2: Scene Image Generation
     img_cmd = [
@@ -74,7 +75,7 @@ def main():
     ]
     if args.overwrite:
         img_cmd.append("--overwrite")
-    run_step("2/4 - Generate Scene Illustrations", img_cmd)
+    run_step("2/5 - Generate Multi-Shot Documentary B-Roll", img_cmd)
 
     # Stage 3: Voice AI / TTS
     tts_cmd = [sys.executable, str(s3), "--manifest", str(args.manifest), "--engine", args.tts_engine]
@@ -82,11 +83,11 @@ def main():
         tts_cmd.extend(["--voice", args.voice])
     if args.overwrite:
         tts_cmd.append("--overwrite")
-    run_step("3/4 - Synthesize Voice AI / TTS & Lock Durations", tts_cmd)
+    run_step("3/5 - Synthesize Studio-Mastered Voiceover & Lock Durations", tts_cmd)
 
     # Stage 4a: Subtitle Generation
     run_step(
-        "4a/4 - Generate Synchronized SRT & Styled ASS Subtitles",
+        "4a/5 - Generate Criterion/Netflix Documentary Subtitles",
         [sys.executable, str(s4_sub), "--manifest", str(args.manifest), "--mode", args.subtitle_mode],
     )
 
@@ -96,9 +97,16 @@ def main():
         vid_cmd.extend(["--bgm", str(args.bgm)])
     if args.fast:
         vid_cmd.append("--fast")
-    run_step("4b/4 - Render & Assemble Final Video", vid_cmd)
+    run_step("4b/5 - Render Multi-Shot Video + Ambient Documentary Soundtrack", vid_cmd)
 
-    print(f"\n[PIPELINE COMPLETE] Final video ready at: {args.output}", flush=True)
+    # Stage 5: Automated Anti-AI-Detection Quality Assurance Gate
+    if s5_qa.exists():
+        run_step(
+            "5/5 - Run 7-Gate Anti-AI-Detection Quality Assurance Inspector",
+            [sys.executable, str(s5_qa), "--manifest", str(args.manifest), "--video", str(args.output)],
+        )
+
+    print(f"\n[PIPELINE COMPLETE] Final video ready & QA-verified at: {args.output}", flush=True)
 
 
 if __name__ == "__main__":

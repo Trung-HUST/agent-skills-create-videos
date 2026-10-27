@@ -1,0 +1,21 @@
+{
+  "name": "agent-skills-create-videos",
+  "version": "1.0.0",
+  "description": "AI Video Production & Enterprise Agent Skills Toolkit (Script & Scene Brain, Scene Image Generation, Voice AI / TTS, Auto Subtitles & Video Editing)",
+  "bin": {
+    "agent-skills-create-videos": "./bin/init.js"
+  },
+  "keywords": [
+    "ai-agents",
+    "antigravity",
+    "video-generation",
+    "tts",
+    "whisper",
+    "ffmpeg",
+    "remotion",
+    "comfyui",
+    "agent-skills"
+  ],
+  "author": "Trung-HUST",
+  "license": "MIT"
+}

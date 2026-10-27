@@ -1,0 +1,8 @@
+1
+00:00:00,100 --> 00:00:05,987
+Your brain treats every unfinished task like an open browser tab consuming background memory.
+
+2
+00:00:05,937 --> 00:00:10,687
+Until the loop is closed, your subconscious refuses to let it go.
+

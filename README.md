@@ -44,8 +44,8 @@ git clone https://github.com/Trung-HUST/agent-skills-create-videos.git
 
 | Nhóm Chức Năng | Skills Chính (Flagship) | Skills Open-Source Tích Hợp Cùng |
 | :--- | :--- | :--- |
-| **Master Orchestrator** | **`create-videos`** (+ Agent `@[video-producer]`, Workflow `/create-video`) | Điều phối toàn trình từ ý tưởng đến file `.mp4` hoàn chỉnh |
-| **1. Bộ não viết kịch bản & chia Scene** | **`video-script-scene-brain`** (`generate_scene_manifest.py`) | `video-script` (Director Layer & Beat Graph), `hook-writing`, `viral-video-benchmark` |
+| **Master Orchestrator** | **`create-videos`** (+ Agent `@[video-producer]`, Workflow `/create-video`) | Điều phối toàn trình từ ý tưởng/sách đến file `.mp4` hoàn chỉnh |
+| **1. Bộ não viết kịch bản, Phân tích sách & chia Scene** | **`video-script-scene-brain`** (`generate_scene_manifest.py`), **`book-analysis-script`** (`book_to_video_scenes.py`) | `book-to-skill` (`virgiliojr94/book-to-skill` — PDF/EPUB/DOCX parser), `video-script` (Director Layer & Beat Graph), `hook-writing`, `viral-video-benchmark` |
 | **2. Tạo ảnh minh họa theo từng Scene** | **`scene-image-generator`** (`generate_scene_images.py`) | `comfyui-prompt-engineer`, `comfyui-character-gen`, `comfyui-workflow-builder`, `comfyui-api`, `comfyui-video-pipeline`, `comfyui-video-production` |
 | **3. Tạo giọng đọc (Voice AI / TTS)** | **`voice-ai-tts`** (`generate_tts_scenes.py`) | `comfyui-voice-pipeline` (Chatterbox, F5-TTS, RVC, Wav2Lip, LivePortrait), `minimax-voice-director` |
 | **4. Tạo phụ đề & Dựng video tự động** | **`auto-subtitle-video-editor`** (`generate_subtitles.py`, `assemble_video.py`) | `ffmpeg-skill` (42 công cụ FFmpeg), `video-assembly`, `audio-to-subtitles`, `media-to-transcript`, `remotion-best-practices`, `remotion-captions`, `remotion-create`, `remotion-multimedia`, `remotion-render`, `remotion-studio` |

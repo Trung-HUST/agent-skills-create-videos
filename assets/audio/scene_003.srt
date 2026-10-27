@@ -1,0 +1,8 @@
+1
+00:00:00,100 --> 00:00:05,912
+They could memorize complex orders from twelve different tables without writing a single word down.
+
+2
+00:00:05,862 --> 00:00:11,337
+Yet the exact moment a bill was paid, their memory of that order vanished completely.
+

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AG STUDIO // Local AI Video Production & QC Deck</title>
+  <meta name="description" content="Editorial Brutalist Local AI Video Production Studio orchestrating Antigravity Script Brain, ComfyUI RTX 5060, Kokoro-82M TTS, and FFmpeg Automated Video Editing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-canvas: #0A0A0A;
+      --bg-panel: #111111;
+      --bg-elevated: #171717;
+      --bg-input: #0D0D0D;
+      --border-raw: #282828;
+      --border-strong: #3E3E3E;
+      --text-primary: #F5F5F0;
+      --text-secondary: #9A9A94;
+      --text-muted: #666660;
+      --signal-orange: #FF5500;
+      --signal-orange-hover: #FF6E24;
+      --acid-volt: #CCFF00;
+      --amber-warn: #FFB800;
+      --crimson-err: #FF2E2E;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* TOP TELEMETRY BAR */
+    .telemetry-header {
+      border-bottom: 2px solid var(--border-raw);
+      background: var(--bg-panel);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      background: var(--signal-orange);
+      color: #0A0A0A;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 4px 8px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+
+    .telemetry-pills {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      padding: 6px 10px;
+      border: 1px solid var(--border-raw);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      display: inline-block;
+      background: var(--text-muted);
+    }
+
+    .dot.online {
+      background: var(--acid-volt);
+      box-shadow: 0 0 8px rgba(204, 255, 0, 0.5);
+    }
+
+    .dot.warn {
+      background: var(--amber-warn);
+    }
+
+    .dot.running {
+      background: var(--signal-orange);
+      animation: pulseOp 1s infinite alternate;
+    }
+
+    @keyframes pulseOp {
+      from { opacity: 0.35; }
+      to { opacity: 1; }
+    }
+
+    /* ASYMMETRIC COMMAND DECK LAYOUT */
+    .studio-shell {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      min-height: calc(100vh - 58px);
+    }
+
+    @media (max-width: 1100px) {
+      .studio-shell {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LEFT COMMAND RAIL */
+    .command-rail {
+      border-right: 2px solid var(--border-raw);
+      background: var(--bg-panel);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .panel-box {
+      border: 1px solid var(--border-raw);
+      background: var(--bg-elevated);
+      padding: 16px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-raw);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--acid-volt);
+    }
+
+    .field-group {
+      margin-bottom: 12px;
+    }
+
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      padding: 8px 10px;
+      border-radius: 0;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--signal-orange);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 68px;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 11px 14px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.12s ease, background-color 0.12s ease, border-color 0.12s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      border-color: var(--text-primary);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translate(0, 0);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--signal-orange);
+      color: #0A0A0A;
+      border-color: var(--signal-orange);
+      width: 100%;
+      font-size: 0.85rem;
+      padding: 14px;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--signal-orange-hover);
+      border-color: var(--acid-volt);
+    }
+
+    .btn-acid {
+      background: var(--acid-volt);
+      color: #0A0A0A;
+      border-color: var(--acid-volt);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.72rem;
+    }
+
+    .stage-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    /* MAIN STORYBOARD & QC WORKSPACE */
+    .workspace-main {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .workspace-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 2px solid var(--border-raw);
+      padding-bottom: 16px;
+    }
+
+    .workspace-heading h1 {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .workspace-heading p {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      margin-top: 2px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* SCENE CARDS MATRIX */
+    .scenes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .scene-card {
+      border: 1px solid var(--border-raw);
+      background: var(--bg-panel);
+      display: grid;
+      grid-template-columns: 84px 1.25fr 1fr;
+      transition: border-color 0.15s ease;
+    }
+
+    .scene-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    @media (max-width: 960px) {
+      .scene-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .scene-index-col {
+      background: var(--bg-elevated);
+      border-right: 1px solid var(--border-raw);
+      padding: 16px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .scene-num {
+      font-family: var(--font-mono);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--signal-orange);
+      line-height: 1;
+    }
+
+    .beat-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      padding: 3px 6px;
+      background: #1F1F1F;
+      border: 1px solid var(--border-strong);
+      color: var(--acid-volt);
+      margin-top: 8px;
+    }
+
+    .dur-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      background: #0D0D0D;
+      border: 1px solid var(--border-raw);
+      padding: 4px 6px;
+      margin-top: 12px;
+    }
+
+    .scene-editor-col {
+      padding: 18px;
+      border-right: 1px solid var(--border-raw);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .scene-media-col {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      background: #0E0E0E;
+    }
+
+    .media-preview-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #070707;
+      border: 1px solid var(--border-raw);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .media-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .empty-media-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 12px;
+    }
+
+    .audio-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .audio-bar audio {
+      width: 100%;
+      height: 34px;
+    }
+
+    .qc-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* TERMINAL LOG CONSOLE */
+    .terminal-dock {
+      border: 1px solid var(--border-strong);
+      background: #060606;
+    }
+
+    .terminal-bar {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-raw);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .terminal-logs {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: #D4D4CE;
+      padding: 14px;
+      height: 210px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+
+    .video-master-preview {
+      width: 100%;
+      background: #000;
+      border: 1px solid var(--acid-volt);
+      margin-top: 8px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP HARDWARE & ENGINE TELEMETRY HEADER -->
+  <header class="telemetry-header" role="banner">
+    <div class="brand-block">
+      <span class="brand-badge">AG // LOCAL DECK</span>
+      <span class="brand-title">AI Video Production &amp; QC Studio</span>
+    </div>
+
+    <div class="telemetry-pills" aria-label="System Hardware and AI Engine Status">
+      <div class="pill" id="gpu-pill">
+        <span class="dot online"></span>
+        <span id="gpu-text">GPU: Scanning RTX 5060...</span>
+      </div>
+      <div class="pill" id="comfy-pill">
+        <span class="dot warn" id="comfy-dot"></span>
+        <span id="comfy-text">ComfyUI: Checking :8188...</span>
+      </div>
+      <div class="pill" id="kokoro-pill">
+        <span class="dot online" id="kokoro-dot"></span>
+        <span id="kokoro-text">TTS: Checking Kokoro...</span>
+      </div>
+      <div class="pill" id="job-pill">
+        <span class="dot online" id="job-dot"></span>
+        <span id="job-text">QUEUE: IDLE</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="studio-shell">
+    <!-- LEFT COMMAND RAIL -->
+    <aside class="command-rail" aria-label="Pipeline Configuration and Batch Controls">
+      <!-- BATCH EXECUTION BOX -->
+      <section class="panel-box">
+        <div class="panel-header">
+          <span class="panel-title">01 // UNATTENDED BATCH QUEUE</span>
+          <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary);">AUTO-SYNC</span>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="btn-run-full" onclick="triggerPipeline('full')">
+          ▶ RUN FULL 4-STAGE PIPELINE
+        </button>
+
+        <div class="stage-buttons">
+          <button type="button" class="btn btn-sm" onclick="triggerPipeline('images')">
+            STAGE 2: IMAGES
+          </button>
+          <button type="button" class="btn btn-sm" onclick="triggerPipeline('tts')">
+            STAGE 3: VOICE AI
+          </button>
+          <button type="button" class="btn btn-sm" onclick="triggerPipeline('render')" style="grid-column: span 2;">
+            STAGE 4: SUBTITLES + RENDER MP4
+          </button>
+        </div>
+
+        <div style="margin-top: 12px; display: flex; gap: 14px; font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-secondary);">
+          <label style="display: inline-flex; align-items: center; gap: 6px; margin: 0; cursor: pointer;">
+            <input type="checkbox" id="chk-overwrite" /> Overwrite Existing
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 6px; margin: 0; cursor: pointer;">
+            <input type="checkbox" id="chk-fast" /> Fast Draft Render
+          </label>
+        </div>
+      </section>
+
+      <!-- ENGINE & FORMAT SETTINGS -->
+      <section class="panel-box">
+        <div class="panel-header">
+          <span class="panel-title">02 // ENGINE &amp; CHANNEL CONFIG</span>
+        </div>
+
+        <div class="field-group">
+          <label for="inp-title">Project / Video Title</label>
+          <input type="text" id="inp-title" placeholder="Enter English Storytelling Title..." />
+        </div>
+
+        <div class="grid-2col field-group">
+          <div>
+            <label for="sel-aspect">Aspect Ratio</label>
+            <select id="sel-aspect" onchange="saveManifest(false)">
+              <option value="16:9">16:9 YouTube (1920x1080)</option>
+              <option value="9:16">9:16 Shorts (1080x1920)</option>
+            </select>
+          </div>
+          <div>
+            <label for="sel-img-engine">Stage 2 Image Engine</label>
+            <select id="sel-img-engine">
+              <option value="comfyui">ComfyUI Local (:8188)</option>
+              <option value="pollinations">Pollinations FLUX (Free Cloud)</option>
+              <option value="sdwebui">SD-WebUI Forge (:7860)</option>
+              <option value="placeholder">Storyboard Card (Instant)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="inp-comfy-url">Local ComfyUI API Endpoint</label>
+          <input type="text" id="inp-comfy-url" value="http://127.0.0.1:8188" />
+        </div>
+
+        <div class="grid-2col field-group">
+          <div>
+            <label for="sel-tts-engine">Stage 3 Voice Engine</label>
+            <select id="sel-tts-engine">
+              <option value="kokoro">Kokoro-82M (Local + Auto Fallback)</option>
+              <option value="edge-tts">Edge-TTS Neural (0 VRAM)</option>
+            </select>
+          </div>
+          <div>
+            <label for="sel-voice">Narrator Voice ID</label>
+            <select id="sel-voice">
+              <option value="am_adam">am_adam (Deep Male Storyteller)</option>
+              <option value="af_heart">af_heart (Warm Female Psychology)</option>
+              <option value="bm_george">bm_george (British Documentary)</option>
+              <option value="bf_emma">bf_emma (British Narrator)</option>
+              <option value="en-US-ChristopherNeural">en-US-ChristopherNeural</option>
+              <option value="en-US-AriaNeural">en-US-AriaNeural</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-sm" id="btn-dl-kokoro" onclick="downloadKokoro()" style="width: 100%; margin-top: 4px;">
+          ⬇ DOWNLOAD KOKORO-82M LOCAL ONNX (310MB)
+        </button>
+      </section>
+
+      <!-- STYLE BIBLE & CHARACTER CONTINUITY -->
+      <section class="panel-box">
+        <div class="panel-header">
+          <span class="panel-title">03 // STYLE BIBLE (VISUAL LOCK)</span>
+        </div>
+
+        <div class="field-group">
+          <label for="inp-style">Global Style Prompt (Appended to all scenes)</label>
+          <textarea id="inp-style" rows="3"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="inp-anchor">Character / Subject Continuity Anchor</label>
+          <input type="text" id="inp-anchor" placeholder="e.g. a contemplative man in a dark wool coat..." />
+        </div>
+
+        <button type="button" class="btn btn-acid btn-sm" onclick="saveManifest(true)" style="width: 100%;">
+          ✔ SAVE PROJECT &amp; STYLE BIBLE
+        </button>
+      </section>
+
+      <!-- FINAL RENDERED VIDEO PLAYER -->
+      <section class="panel-box">
+        <div class="panel-header">
+          <span class="panel-title">04 // MASTER MP4 DELIVERABLE</span>
+          <span id="final-vid-meta" style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary);">NOT RENDERED</span>
+        </div>
+        <div id="final-video-container">
+          <div class="empty-media-label">Run Stage 4 or Full Pipeline to inspect final rendered MP4 here.</div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- MAIN STORYBOARD & QC MATRIX -->
+    <main class="workspace-main" role="main">
+      <div class="workspace-toolbar">
+        <div class="workspace-heading">
+          <h1>SCENE STORYBOARD &amp; HUMAN-IN-THE-LOOP QC</h1>
+          <p>Antigravity authors &amp; QCs `scenes.json` • Edit narration or visual prompts below, or re-generate individual scenes before final export.</p>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn" onclick="addScene()">+ ADD SCENE</button>
+          <button type="button" class="btn btn-acid" onclick="saveManifest(true)">✔ SAVE ALL CHANGES</button>
+        </div>
+      </div>
+
+      <!-- DYNAMIC SCENES LIST -->
+      <div id="scenes-container" class="scenes-list" aria-live="polite"></div>
+
+      <!-- LIVE TELEMETRY TERMINAL -->
+      <section class="terminal-dock" aria-label="Pipeline Execution Logs">
+        <div class="terminal-bar">
+          <span>LIVE PIPELINE TELEMETRY // STDOUT &amp; FFMPEG LOGS</span>
+          <span id="active-task-label" style="color: var(--acid-volt);">IDLE</span>
+        </div>
+        <div id="terminal-output" class="terminal-logs">Loading studio telemetry...</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let currentManifest = null;
+    let lastJobStatus = "idle";
+
+    async function fetchStatus() {
+      try {
+        const res = await fetch("/api/status");
+        const data = await res.json();
+
+        document.getElementById("gpu-text").textContent = data.gpu;
+
+        const comfyDot = document.getElementById("comfy-dot");
+        const comfyText = document.getElementById("comfy-text");
+        if (data.comfyui.online) {
+          comfyDot.className = "dot online";
+          comfyText.textContent = "ComfyUI: ONLINE (" + data.comfyui.device + ")";
+        } else {
+          comfyDot.className = "dot warn";
+          comfyText.textContent = "ComfyUI: OFFLINE (Auto-Fallback Ready)";
+        }
+
+        const kokoroDot = document.getElementById("kokoro-dot");
+        const kokoroText = document.getElementById("kokoro-text");
+        kokoroText.textContent = "TTS: " + data.kokoro.mode;
+        kokoroDot.className = data.kokoro.local_onnx_ready ? "dot online" : "dot warn";
+        const dlBtn = document.getElementById("btn-dl-kokoro");
+        if (data.kokoro.local_onnx_ready) {
+          dlBtn.textContent = "✔ KOKORO-82M LOCAL ONNX INSTALLED";
+          dlBtn.disabled = true;
+        }
+
+        const jobDot = document.getElementById("job-dot");
+        const jobText = document.getElementById("job-text");
+        const activeLabel = document.getElementById("active-task-label");
+        const runBtn = document.getElementById("btn-run-full");
+
+        jobText.textContent = "QUEUE: " + data.job.status.toUpperCase();
+        activeLabel.textContent = data.job.current_task;
+
+        if (data.job.status === "running") {
+          jobDot.className = "dot running";
+          runBtn.disabled = true;
+          runBtn.textContent = "⏳ PIPELINE RUNNING IN BACKGROUND...";
+        } else {
+          jobDot.className = "dot online";
+          runBtn.disabled = false;
+          runBtn.textContent = "▶ RUN FULL 4-STAGE PIPELINE";
+        }
+
+        const term = document.getElementById("terminal-output");
+        const joinedLogs = (data.job.logs || []).join("\n");
+        if (term.textContent !== joinedLogs) {
+          term.textContent = joinedLogs;
+          term.scrollTop = term.scrollHeight;
+        }
+
+        // Reload manifest automatically when a running job finishes
+        if (lastJobStatus === "running" && data.job.status !== "running") {
+          await loadManifest();
+        }
+        lastJobStatus = data.job.status;
+      } catch (err) {
+        console.error("Status poll error:", err);
+      }
+    }
+
+    async function loadManifest() {
+      const res = await fetch("/api/manifest");
+      currentManifest = await res.json();
+
+      document.getElementById("inp-title").value = currentManifest.project_title || "";
+      document.getElementById("sel-aspect").value = currentManifest.aspect_ratio || "16:9";
+
+      const vcfg = currentManifest.voice_config || {};
+      if (vcfg.engine) document.getElementById("sel-tts-engine").value = vcfg.engine;
+      if (vcfg.voice_id) document.getElementById("sel-voice").value = vcfg.voice_id;
+
+      const sb = currentManifest.style_bible || {};
+      document.getElementById("inp-style").value = sb.global_style_prompt || "";
+      document.getElementById("inp-anchor").value = sb.character_anchor || "";
+
+      renderScenes();
+      renderFinalVideo();
+    }
+
+    function renderFinalVideo() {
+      const container = document.getElementById("final-video-container");
+      const meta = document.getElementById("final-vid-meta");
+      if (currentManifest && currentManifest.final_video_exists) {
+        const vpath = currentManifest.final_video_path + "?t=" + (currentManifest.final_video_mtime || Date.now());
+        meta.textContent = (currentManifest.final_video_size_kb || 0) + " KB";
+        container.innerHTML = `
+          <video class="video-master-preview" controls preload="metadata" src="/${vpath}"></video>
+          <a href="/${currentManifest.final_video_path}" download class="btn btn-acid btn-sm" style="width:100%; margin-top:8px; text-decoration:none;">
+            ⬇ DOWNLOAD FINAL MP4
+          </a>
+        `;
+      } else {
+        meta.textContent = "NOT RENDERED";
+        container.innerHTML = `<div class="empty-media-label">No MP4 rendered yet. Click [RUN FULL 4-STAGE PIPELINE] to produce video.</div>`;
+      }
+    }
+
+    function renderScenes() {
+      const list = document.getElementById("scenes-container");
+      list.innerHTML = "";
+      const scenes = (currentManifest && currentManifest.scenes) || [];
+
+      scenes.forEach((sc, idx) => {
+        const sid = idx + 1;
+        const dur = sc.audio_duration_sec
+          ? `${Number(sc.audio_duration_sec).toFixed(2)}s LOCKED`
+          : `~${Number(sc.estimated_duration_sec || 5.0).toFixed(1)}s EST`;
+
+        const imgHtml = sc.image_exists
+          ? `<img src="/${sc.image_path}?t=${sc.image_mtime || Date.now()}" alt="Scene ${sid} illustration" />`
+          : `<div class="empty-media-label">NO IMAGE YET<br/>Click [↻ RE-GEN IMAGE] or run Stage 2</div>`;
+
+        const audHtml = sc.audio_exists
+          ? `<audio controls preload="none" src="/${sc.audio_path}?t=${sc.audio_mtime || Date.now()}"></audio>`
+          : `<div class="empty-media-label" style="padding:4px 0;">No voiceover synthesized yet</div>`;
+
+        const card = document.createElement("article");
+        card.className = "scene-card";
+        card.innerHTML = `
+          <div class="scene-index-col">
+            <div>
+              <div class="scene-num">#${String(sid).padStart(2, "0")}</div>
+              <div class="beat-tag">${escapeHtml(sc.beat_type || "BODY")}</div>
+            </div>
+            <div class="dur-badge">${dur}</div>
+          </div>
+
+          <div class="scene-editor-col">
+            <div class="field-group">
+              <label>English Narration (Voiceover Script)</label>
+              <textarea rows="3" onchange="updateSceneField(${idx}, 'narration_text', this.value)">${escapeHtml(sc.narration_text || "")}</textarea>
+            </div>
+            <div class="field-group">
+              <label>Scene Visual Prompt (Sent to ComfyUI / FLUX with Style Bible)</label>
+              <textarea rows="3" onchange="updateSceneField(${idx}, 'visual_prompt', this.value)">${escapeHtml(sc.visual_prompt || "")}</textarea>
+            </div>
+            <div class="grid-2col">
+              <div>
+                <label>Camera Motion (Ken Burns)</label>
+                <select onchange="updateSceneField(${idx}, 'camera_motion', this.value)">
+                  <option value="zoom_in" ${sc.camera_motion === "zoom_in" ? "selected" : ""}>zoom_in (Slow Push)</option>
+                  <option value="zoom_out" ${sc.camera_motion === "zoom_out" ? "selected" : ""}>zoom_out (Wide Reveal)</option>
+                  <option value="pan_right" ${sc.camera_motion === "pan_right" ? "selected" : ""}>pan_right (Horizontal)</option>
+                  <option value="pan_left" ${sc.camera_motion === "pan_left" ? "selected" : ""}>pan_left (Horizontal)</option>
+                </select>
+              </div>
+              <div>
+                <label>Beat Role</label>
+                <select onchange="updateSceneField(${idx}, 'beat_type', this.value)">
+                  <option value="hook" ${sc.beat_type === "hook" ? "selected" : ""}>hook (0-3s Attention)</option>
+                  <option value="setup" ${sc.beat_type === "setup" ? "selected" : ""}>setup (Context)</option>
+                  <option value="escalation" ${sc.beat_type === "escalation" ? "selected" : ""}>escalation (Tension)</option>
+                  <option value="proof" ${sc.beat_type === "proof" ? "selected" : ""}>proof (Insight/Mechanism)</option>
+                  <option value="payoff" ${sc.beat_type === "payoff" ? "selected" : ""}>payoff (Resolution/Takeaway)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="scene-media-col">
+            <div class="media-preview-box">${imgHtml}</div>
+            <div class="audio-bar">${audHtml}</div>
+            <div class="qc-actions">
+              <button type="button" class="btn btn-sm" onclick="regenSceneImage(${sid})">↻ RE-GEN IMAGE</button>
+              <button type="button" class="btn btn-sm" onclick="regenSceneTts(${sid})">↻ RE-GEN VOICE</button>
+              <button type="button" class="btn btn-sm" style="margin-left:auto; color: var(--crimson-err);" onclick="deleteScene(${idx})">✕</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function updateSceneField(idx, field, val) {
+      if (!currentManifest || !currentManifest.scenes[idx]) return;
+      currentManifest.scenes[idx][field] = val;
+    }
+
+    function syncFormToManifest() {
+      if (!currentManifest) return;
+      currentManifest.project_title = document.getElementById("inp-title").value.trim();
+      currentManifest.aspect_ratio = document.getElementById("sel-aspect").value;
+      currentManifest.voice_config = {
+        engine: document.getElementById("sel-tts-engine").value,
+        voice_id: document.getElementById("sel-voice").value,
+        rate: "+0%",
+        pitch: "+0Hz",
+      };
+      currentManifest.style_bible = currentManifest.style_bible || {};
+      currentManifest.style_bible.global_style_prompt = document.getElementById("inp-style").value.trim();
+      currentManifest.style_bible.character_anchor = document.getElementById("inp-anchor").value.trim();
+    }
+
+    async function saveManifest(showFeedback = true) {
+      syncFormToManifest();
+      const res = await fetch("/api/manifest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentManifest),
+      });
+      const out = await res.json();
+      if (out.ok && out.manifest) {
+        currentManifest = out.manifest;
+        renderScenes();
+      }
+    }
+
+    async function addScene() {
+      syncFormToManifest();
+      const nextId = (currentManifest.scenes ? currentManifest.scenes.length : 0) + 1;
+      currentManifest.scenes.push({
+        scene_id: nextId,
+        beat_type: "escalation",
+        narration_text: "Write the next English storytelling beat here...",
+        visual_prompt: "Cinematic shot illustrating the scene with dramatic lighting and depth of field",
+        camera_motion: "zoom_in",
+        transition: "crossfade",
+        estimated_duration_sec: 6.0,
+      });
+      await saveManifest(false);
+    }
+
+    async function deleteScene(idx) {
+      if (!currentManifest || currentManifest.scenes.length <= 1) return;
+      currentManifest.scenes.splice(idx, 1);
+      await saveManifest(false);
+    }
+
+    async function regenSceneImage(sceneId) {
+      await saveManifest(false);
+      await fetch("/api/scene/regen-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scene_id: sceneId,
+          image_engine: document.getElementById("sel-img-engine").value,
+          comfyui_url: document.getElementById("inp-comfy-url").value.trim(),
+        }),
+      });
+      await fetchStatus();
+    }
+
+    async function regenSceneTts(sceneId) {
+      await saveManifest(false);
+      await fetch("/api/scene/regen-tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scene_id: sceneId,
+          tts_engine: document.getElementById("sel-tts-engine").value,
+          voice_id: document.getElementById("sel-voice").value,
+        }),
+      });
+      await fetchStatus();
+    }
+
+    async function triggerPipeline(mode) {
+      await saveManifest(false);
+      await fetch("/api/pipeline/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: mode,
+          image_engine: document.getElementById("sel-img-engine").value,
+          comfyui_url: document.getElementById("inp-comfy-url").value.trim(),
+          tts_engine: document.getElementById("sel-tts-engine").value,
+          voice_id: document.getElementById("sel-voice").value,
+          overwrite: document.getElementById("chk-overwrite").checked,
+          fast: document.getElementById("chk-fast").checked,
+        }),
+      });
+      await fetchStatus();
+    }
+
+    async function downloadKokoro() {
+      await fetch("/api/kokoro/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      await fetchStatus();
+    }
+
+    loadManifest();
+    fetchStatus();
+    setInterval(fetchStatus, 1400);
+  </script>
+</body>
+</html>

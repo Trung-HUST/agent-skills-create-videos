@@ -1,0 +1,43 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 1
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,46,&H0000FFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,2,2,60,60,86,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.76,Default,,0,0,0,,{\fad(80,60)}Have you ever wondered why a
+Dialogue: 0,0:00:01.76,0:00:03.20,Default,,0,0,0,,{\fad(80,60)}cliffhanger in a movie,
+Dialogue: 0,0:00:03.20,0:00:05.46,Default,,0,0,0,,{\fad(80,60)}or a single unanswered text message,
+Dialogue: 0,0:00:05.46,0:00:07.40,Default,,0,0,0,,{\fad(80,60)}can hijack your entire night of
+Dialogue: 0,0:00:07.40,0:00:07.78,Default,,0,0,0,,{\fad(80,60)}sleep?
+Dialogue: 0,0:00:07.78,0:00:09.38,Default,,0,0,0,,{\fad(80,60)}In nineteen twenty seven,
+Dialogue: 0,0:00:09.38,0:00:12.21,Default,,0,0,0,,{\fad(80,60)}a Russian psychologist named Bluma Zeigarnik
+Dialogue: 0,0:00:12.21,0:00:14.07,Default,,0,0,0,,{\fad(80,60)}sat in a crowded Vienna cafe,
+Dialogue: 0,0:00:14.07,0:00:16.57,Default,,0,0,0,,{\fad(80,60)}and noticed something strange about the
+Dialogue: 0,0:00:16.57,0:00:17.09,Default,,0,0,0,,{\fad(80,60)}waiters.
+Dialogue: 0,0:00:17.09,0:00:19.57,Default,,0,0,0,,{\fad(80,60)}They could memorize complex orders from
+Dialogue: 0,0:00:19.57,0:00:22.18,Default,,0,0,0,,{\fad(80,60)}twelve different tables without writing a
+Dialogue: 0,0:00:22.18,0:00:23.27,Default,,0,0,0,,{\fad(80,60)}single word down.
+Dialogue: 0,0:00:23.27,0:00:24.98,Default,,0,0,0,,{\fad(80,60)}Yet the exact moment a bill
+Dialogue: 0,0:00:24.98,0:00:25.56,Default,,0,0,0,,{\fad(80,60)}was paid,
+Dialogue: 0,0:00:25.56,0:00:27.79,Default,,0,0,0,,{\fad(80,60)}their memory of that order vanished
+Dialogue: 0,0:00:27.79,0:00:28.49,Default,,0,0,0,,{\fad(80,60)}completely.
+Dialogue: 0,0:00:28.49,0:00:31.21,Default,,0,0,0,,{\fad(80,60)}Your brain treats every unfinished task
+Dialogue: 0,0:00:31.21,0:00:33.59,Default,,0,0,0,,{\fad(80,60)}like an open browser tab consuming
+Dialogue: 0,0:00:33.59,0:00:34.84,Default,,0,0,0,,{\fad(80,60)}background memory.
+Dialogue: 0,0:00:34.84,0:00:36.59,Default,,0,0,0,,{\fad(80,60)}Until the loop is closed,
+Dialogue: 0,0:00:36.59,0:00:39.03,Default,,0,0,0,,{\fad(80,60)}your subconscious refuses to let it
+Dialogue: 0,0:00:39.03,0:00:39.24,Default,,0,0,0,,{\fad(80,60)}go.
+Dialogue: 0,0:00:39.24,0:00:40.98,Default,,0,0,0,,{\fad(80,60)}To beat procrastination,
+Dialogue: 0,0:00:40.98,0:00:43.30,Default,,0,0,0,,{\fad(80,60)}never force yourself to finish a
+Dialogue: 0,0:00:43.30,0:00:44.47,Default,,0,0,0,,{\fad(80,60)}massive project.
+Dialogue: 0,0:00:44.47,0:00:46.42,Default,,0,0,0,,{\fad(80,60)}Just start for two minutes.
+Dialogue: 0,0:00:46.42,0:00:48.02,Default,,0,0,0,,{\fad(80,60)}Once the loop is open,
+Dialogue: 0,0:00:48.02,0:00:50.27,Default,,0,0,0,,{\fad(80,60)}your own brain will demand that
+Dialogue: 0,0:00:50.27,0:00:51.29,Default,,0,0,0,,{\fad(80,60)}you finish it.

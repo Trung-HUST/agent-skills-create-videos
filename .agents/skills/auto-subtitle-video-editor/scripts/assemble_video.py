@@ -1,16 +1,28 @@
 #!/usr/bin/env python3
 """
 assemble_video.py
-Automated Video Editor & Renderer using FFmpeg.
+Automated Video Editor & Renderer using FFmpeg (auto-detects system ffmpeg or imageio_ffmpeg binary).
 Reads scenes.json, renders each scene with Ken Burns camera motion synced to its TTS audio,
 concatenates all scenes, burns in styled ASS/SRT subtitles, mixes optional BGM, and verifies the final MP4.
 """
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+
+def get_ffmpeg_exe() -> str:
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return "ffmpeg"
 
 
 def build_camera_filter(motion: str, width: int, height: int, fps: int, duration: float, fast: bool) -> str:
@@ -22,16 +34,27 @@ def build_camera_filter(motion: str, width: int, height: int, fps: int, duration
         return f"{base_scale},fps={fps},format=yuv420p"
 
     total_frames = max(1, int(round(duration * fps)))
-    # Smooth Ken Burns zoom using zoompan
     if motion in ("zoom_out", "zoom_out_slow"):
         z_expr = f"if(eq(on,1),1.12,max(1.0,zoom-0.12/{total_frames}))"
+        x_expr = "iw/2-(iw/zoom/2)"
+        y_expr = "ih/2-(ih/zoom/2)"
+    elif motion == "pan_right":
+        z_expr = "1.10"
+        x_expr = f"(iw-iw/zoom)*(on/{total_frames})"
+        y_expr = "ih/2-(ih/zoom/2)"
+    elif motion == "pan_left":
+        z_expr = "1.10"
+        x_expr = f"(iw-iw/zoom)*(1-on/{total_frames})"
+        y_expr = "ih/2-(ih/zoom/2)"
     else:
         z_expr = f"min(zoom+0.12/{total_frames},1.12)"
+        x_expr = "iw/2-(iw/zoom/2)"
+        y_expr = "ih/2-(ih/zoom/2)"
 
     return (
         f"scale={width * 2}:{height * 2}:force_original_aspect_ratio=increase,"
         f"crop={width * 2}:{height * 2},"
-        f"zoompan=z='{z_expr}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+        f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':"
         f"d={total_frames}:s={width}x{height}:fps={fps},"
         f"setsar=1,format=yuv420p"
     )
@@ -52,6 +75,7 @@ def escape_ffmpeg_filter_path(p: Path) -> str:
 def render_scene_clip(
     scene: dict, width: int, height: int, fps: int, clip_path: Path, fast: bool
 ) -> bool:
+    ffmpeg_bin = get_ffmpeg_exe()
     img_path = Path(scene["image_path"])
     aud_path = Path(scene["audio_path"])
     dur = float(scene.get("audio_duration_sec") or scene.get("estimated_duration_sec") or 4.0)
@@ -59,7 +83,7 @@ def render_scene_clip(
 
     vf = build_camera_filter(motion, width, height, fps, dur, fast)
     cmd = [
-        "ffmpeg",
+        ffmpeg_bin,
         "-y",
         "-loop",
         "1",
@@ -74,7 +98,7 @@ def render_scene_clip(
         "-c:v",
         "libx264",
         "-preset",
-        "veryfast" if fast else "medium",
+        "veryfast" if fast else "fast",
         "-crf",
         "20",
         "-c:a",
@@ -110,9 +134,10 @@ def main():
         print(f"[ERROR] Manifest not found: {args.manifest}", file=sys.stderr)
         sys.exit(1)
 
+    ffmpeg_bin = get_ffmpeg_exe()
     data = json.loads(args.manifest.read_text(encoding="utf-8"))
-    res = data.get("resolution", {"width": 1080, "height": 1920})
-    width, height = int(res.get("width", 1080)), int(res.get("height", 1920))
+    res = data.get("resolution", {"width": 1920, "height": 1080})
+    width, height = int(res.get("width", 1920)), int(res.get("height", 1080))
     fps = int(data.get("fps", 30))
     scenes = data.get("scenes", [])
 
@@ -135,7 +160,7 @@ def main():
 
     merged_raw = clips_dir / "merged_raw.mp4"
     cmd_concat = [
-        "ffmpeg",
+        ffmpeg_bin,
         "-y",
         "-f",
         "concat",
@@ -163,7 +188,7 @@ def main():
         else:
             vf_filters.append(f"subtitles='{escaped_sub}'")
 
-    cmd_final = ["ffmpeg", "-y", "-i", str(merged_raw)]
+    cmd_final = [ffmpeg_bin, "-y", "-i", str(merged_raw)]
     if args.bgm and args.bgm.exists():
         cmd_final.extend(["-stream_loop", "-1", "-i", str(args.bgm)])
 
@@ -189,6 +214,8 @@ def main():
         print(f"[ERROR] Final FFmpeg step failed:\n{res_final.stderr[-600:]}", file=sys.stderr)
         sys.exit(1)
 
+    data["final_video_path"] = str(args.output).replace("\\", "/")
+    args.manifest.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[SUCCESS] Video rendered successfully: {args.output} ({args.output.stat().st_size // 1024} KB)")
 
 

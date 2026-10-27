@@ -3,8 +3,8 @@
 run_video_pipeline.py
 Master end-to-end orchestrator that runs all 4 stages of AI Video Production:
   Stage 1: Validate scenes.json manifest
-  Stage 2: Generate per-scene illustrations
-  Stage 3: Synthesize per-scene TTS voiceovers & probe exact durations
+  Stage 2: Generate per-scene illustrations (ComfyUI / Pollinations / SDWebUI / Placeholder)
+  Stage 3: Synthesize per-scene TTS voiceovers (Kokoro / Edge-TTS / F5-TTS) & probe exact durations
   Stage 4: Generate synchronized SRT/ASS subtitles & assemble final MP4 video
 """
 import argparse
@@ -16,10 +16,10 @@ SKILLS_ROOT = Path(__file__).resolve().parents[2]
 
 
 def run_step(title: str, cmd: list[str]) -> None:
-    print(f"\n{'=' * 60}\n[STAGE] {title}\n{'=' * 60}")
+    print(f"\n{'=' * 60}\n[STAGE] {title}\n{'=' * 60}", flush=True)
     res = subprocess.run(cmd)
     if res.returncode != 0:
-        print(f"[ERROR] Stage failed: {title}", file=sys.stderr)
+        print(f"[ERROR] Stage failed: {title}", file=sys.stderr, flush=True)
         sys.exit(res.returncode)
 
 
@@ -28,14 +28,15 @@ def main():
     parser.add_argument("--manifest", type=Path, default=Path("scenes.json"), help="Path to scenes.json")
     parser.add_argument(
         "--image-engine",
-        default="pollinations",
-        choices=["pollinations", "sdwebui", "comfyui", "placeholder"],
+        default="comfyui",
+        choices=["comfyui", "pollinations", "sdwebui", "placeholder"],
         help="Scene image generator engine",
     )
+    parser.add_argument("--comfyui-url", default="http://127.0.0.1:8188", help="Local ComfyUI API URL")
     parser.add_argument(
         "--tts-engine",
-        default="edge-tts",
-        choices=["edge-tts", "f5-tts", "openai"],
+        default="kokoro",
+        choices=["kokoro", "edge-tts", "f5-tts", "openai"],
         help="TTS voice engine",
     )
     parser.add_argument("--voice", default="", help="Optional TTS voice override")
@@ -47,6 +48,7 @@ def main():
     )
     parser.add_argument("--bgm", type=Path, default=None, help="Optional background music file")
     parser.add_argument("--fast", action="store_true", help="Fast draft render mode")
+    parser.add_argument("--overwrite", action="store_true", help="Force regenerate all assets")
     parser.add_argument("--output", type=Path, default=Path("output/final_video.mp4"), help="Output MP4 path")
     args = parser.parse_args()
 
@@ -60,15 +62,26 @@ def main():
     run_step("1/4 - Validate Script & Scene Breakdown Manifest", [sys.executable, str(s1), "--validate", str(args.manifest)])
 
     # Stage 2: Scene Image Generation
-    run_step(
-        "2/4 - Generate Scene Illustrations",
-        [sys.executable, str(s2), "--manifest", str(args.manifest), "--engine", args.image_engine],
-    )
+    img_cmd = [
+        sys.executable,
+        str(s2),
+        "--manifest",
+        str(args.manifest),
+        "--engine",
+        args.image_engine,
+        "--api-url",
+        args.comfyui_url,
+    ]
+    if args.overwrite:
+        img_cmd.append("--overwrite")
+    run_step("2/4 - Generate Scene Illustrations", img_cmd)
 
     # Stage 3: Voice AI / TTS
     tts_cmd = [sys.executable, str(s3), "--manifest", str(args.manifest), "--engine", args.tts_engine]
     if args.voice:
         tts_cmd.extend(["--voice", args.voice])
+    if args.overwrite:
+        tts_cmd.append("--overwrite")
     run_step("3/4 - Synthesize Voice AI / TTS & Lock Durations", tts_cmd)
 
     # Stage 4a: Subtitle Generation
@@ -85,7 +98,7 @@ def main():
         vid_cmd.append("--fast")
     run_step("4b/4 - Render & Assemble Final Video", vid_cmd)
 
-    print(f"\n[PIPELINE COMPLETE] Final video ready at: {args.output}")
+    print(f"\n[PIPELINE COMPLETE] Final video ready at: {args.output}", flush=True)
 
 
 if __name__ == "__main__":

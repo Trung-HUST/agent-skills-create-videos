@@ -1,0 +1,4 @@
+1
+00:00:00,100 --> 00:00:09,300
+In nineteen twenty seven, a Russian psychologist named Bluma Zeigarnik sat in a crowded Vienna cafe, and noticed something strange about the waiters.
+

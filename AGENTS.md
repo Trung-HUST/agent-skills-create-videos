@@ -24,7 +24,7 @@
 
 - AI Video Production & Automated Video Pipeline (Priority Domain):
   - Master Orchestrator & Agent: `@[video-producer]` agent, `create-videos` skill (`/create-video` workflow).
-  - 1. Bộ não viết kịch bản & chia Scene: `video-script-scene-brain`, `video-script`, `hook-writing`, `viral-video-benchmark`.
+  - 1. Bộ não viết kịch bản, Phân tích sách & chia Scene: `book-analysis-script` (Book Essay / Tóm tắt & Phân tích sách chuyên sâu), `book-to-skill` (`virgiliojr94/book-to-skill` PDF/EPUB extractor), `video-script-scene-brain`, `video-script`, `hook-writing`, `viral-video-benchmark`.
   - 2. Tạo ảnh minh họa theo từng Scene: `scene-image-generator`, `comfyui-prompt-engineer`, `comfyui-character-gen`, `comfyui-workflow-builder`, `comfyui-api`, `comfyui-video-pipeline`, `comfyui-video-production`.
   - 3. Tạo giọng đọc (Voice AI / TTS): `voice-ai-tts` (Edge-TTS, Kokoro-82M, F5-TTS, Chatterbox, Piper), `comfyui-voice-pipeline`, `minimax-voice-director`.
   - 4. Tạo phụ đề & Dựng video tự động: `auto-subtitle-video-editor` (faster-whisper, WhisperX, ASS/SRT burn-in, Ken Burns FFmpeg), `ffmpeg-skill` (42 tools), `video-assembly`, `audio-to-subtitles`, `remotion-best-practices`, `remotion-captions`, `remotion-create`, `remotion-render`.

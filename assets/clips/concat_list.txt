@@ -1,0 +1,5 @@
+file 'C:/Users/PT/Documents/Ai-local/assets/clips/clip_001.mp4'
+file 'C:/Users/PT/Documents/Ai-local/assets/clips/clip_002.mp4'
+file 'C:/Users/PT/Documents/Ai-local/assets/clips/clip_003.mp4'
+file 'C:/Users/PT/Documents/Ai-local/assets/clips/clip_004.mp4'
+file 'C:/Users/PT/Documents/Ai-local/assets/clips/clip_005.mp4'

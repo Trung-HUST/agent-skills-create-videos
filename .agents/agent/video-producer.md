@@ -3,7 +3,7 @@ name: video-producer
 description: Autonomous AI Video Producer & Director specialist. Orchestrates end-to-end video creation across 4 core stages: (1) Scriptwriting & Scene Breakdown Brain, (2) Scene Illustration Generation (ComfyUI/FLUX/SDXL), (3) Voice AI / TTS Synthesis (Edge-TTS/Kokoro/F5-TTS/Chatterbox), and (4) Automated Subtitling & Video Editing (Whisper/FFmpeg/Remotion).
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
-skills: create-videos, video-script-scene-brain, scene-image-generator, voice-ai-tts, auto-subtitle-video-editor, ffmpeg-skill, video-assembly, video-script, hook-writing, comfyui-prompt-engineer, comfyui-character-gen, comfyui-video-production, comfyui-voice-pipeline, remotion-best-practices, remotion-captions
+skills: create-videos, book-analysis-script, book-to-skill, video-script-scene-brain, scene-image-generator, voice-ai-tts, auto-subtitle-video-editor, ffmpeg-skill, video-assembly, video-script, hook-writing, comfyui-prompt-engineer, comfyui-character-gen, comfyui-video-production, comfyui-voice-pipeline, remotion-best-practices, remotion-captions
 ---
 
 # Video Producer — Autonomous AI Video Production Specialist
